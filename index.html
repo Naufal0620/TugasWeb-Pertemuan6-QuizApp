@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Kuis Interaktif</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+    <header class="app-header">
+      <div class="header-content">
+        <div class="brand" id="headerBrand" role="button" tabindex="0" title="Kembali ke Beranda">
+          <div class="brand-icon-wrapper">
+            <i class="fa-solid fa-laptop-code brand-icon"></i>
+          </div>
+          <div class="brand-text">
+            <h1>Quiz App</h1>
+            <p>Pemrograman Web</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="badge-high-score" title="Skor Tertinggi">
+            <i class="fa-solid fa-trophy icon-trophy"></i>
+            <span id="topBarHighScore">0%</span>
+          </div>
+          <button id="themeToggle" class="btn-icon" aria-label="Ganti Tema">
+            <i id="themeIcon" class="fa-solid fa-moon theme-icon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="quiz-card">
+      <div id="progressBarContainer" class="progress-bar-container hidden">
+        <div id="progressBar" class="progress-bar" style="width: 0%;"></div>
+      </div>
+
+      <section id="homeScreen" class="screen-section">
+        <div class="screen-header">
+          <h2 class="screen-title">Pengaturan Kuis</h2>
+          <p class="screen-desc">Sesuaikan topik dan parameter kuis sebelum memulai.</p>
+        </div>
+
+        <form id="quizSettingsForm" class="settings-form">
+          <div class="form-group">
+            <label for="topicSelect" class="form-label">
+              <i class="fa-solid fa-layer-group label-icon"></i>
+              <span>Topik Materi</span>
+            </label>
+            <select id="topicSelect" class="form-select">
+              <option value="all">Semua Topik (Campuran)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="questionCountSelect" class="form-label">
+                <i class="fa-solid fa-list-ol label-icon"></i>
+                <span>Jumlah Soal</span>
+              </label>
+              <select id="questionCountSelect" class="form-select">
+                <option value="5" selected>5 Soal</option>
+                <option value="10">10 Soal</option>
+                <option value="all">Semua Soal Tersedia</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="timeLimitSelect" class="form-label">
+                <i class="fa-solid fa-stopwatch label-icon"></i>
+                <span>Waktu per Soal</span>
+              </label>
+              <select id="timeLimitSelect" class="form-select">
+                <option value="10">10 Detik</option>
+                <option value="15" selected>15 Detik</option>
+                <option value="30">30 Detik</option>
+                <option value="0">Tanpa Batas Waktu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group options-group">
+            <label class="form-label mb-sm">
+              <i class="fa-solid fa-sliders label-icon"></i>
+              <span>Opsi Acak</span>
+            </label>
+            <div class="checkbox-wrapper">
+              <label class="checkbox-label" for="shuffleQuestionsCheckbox">
+                <input type="checkbox" id="shuffleQuestionsCheckbox" checked>
+                <span>Acak urutan soal</span>
+              </label>
+              <label class="checkbox-label" for="shuffleOptionsCheckbox">
+                <input type="checkbox" id="shuffleOptionsCheckbox" checked>
+                <span>Acak urutan pilihan jawaban</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="info-callout">
+            <i class="fa-solid fa-circle-info callout-icon"></i>
+            <span id="availableQuestionsInfo">Menyiapkan data soal...</span>
+          </div>
+
+          <button type="submit" id="startQuizBtn" class="btn btn-primary btn-block">
+            <span>Mulai Kuis</span>
+            <i class="fa-solid fa-play"></i>
+          </button>
+        </form>
+      </section>
+
+      <section id="quizScreen" class="screen-section hidden">
+        <div class="quiz-meta">
+          <div class="meta-left">
+            <span id="categoryBadge" class="badge badge-category">HTML</span>
+            <span id="progress" class="badge badge-progress">Soal 1/5</span>
+          </div>
+          <div class="meta-right">
+            <div id="timerContainer" class="timer-badge">
+              <i class="fa-solid fa-stopwatch timer-icon"></i>
+              <span id="timerText">15s</span>
+            </div>
+            <button id="quitQuizBtn" class="btn-icon btn-icon-sm" title="Keluar" aria-label="Keluar dari Kuis">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="question-container">
+          <h2 id="question" class="question-text">Memuat pertanyaan...</h2>
+        </div>
+
+        <div id="options" class="options-grid"></div>
+
+        <div class="quiz-footer">
+          <div id="feedbackBox" class="feedback-box hidden">
+            <span id="feedbackIcon" class="feedback-icon"></span>
+            <span id="feedbackText" class="feedback-text"></span>
+          </div>
+          <button id="nextBtn" class="btn btn-primary hidden">
+            <span>Lanjut</span>
+            <i class="fa-solid fa-arrow-right btn-arrow"></i>
+          </button>
+        </div>
+      </section>
+
+      <section id="resultScreen" class="screen-section result-screen hidden">
+        <div class="result-header">
+          <div id="resultTrophy" class="result-trophy">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <h2 id="resultTitle" class="result-title">Kuis Selesai</h2>
+          <p id="resultMessage" class="result-message">Ringkasan hasil pengerjaan kuis:</p>
+        </div>
+
+        <div class="result-stats">
+          <div class="stat-card">
+            <span class="stat-label">Nilai Akhir</span>
+            <span id="score" class="stat-value highlight">0/0 (0%)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">High Score</span>
+            <span id="highScore" class="stat-value">0%</span>
+          </div>
+        </div>
+
+        <div class="result-breakdown">
+          <div class="breakdown-item correct-count">
+            <span class="dot"></span>
+            <span>Benar:</span>
+            <strong id="correctCount">0</strong>
+          </div>
+          <div class="breakdown-item wrong-count">
+            <span class="dot"></span>
+            <span>Salah:</span>
+            <strong id="wrongCount">0</strong>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button id="restartBtn" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-rotate-right"></i>
+            <span>Ulangi Kuis</span>
+          </button>
+          <button id="backToHomeBtn" class="btn btn-secondary btn-block">
+            <i class="fa-solid fa-gear"></i>
+            <span>Ubah Pengaturan</span>
+          </button>
+          <button id="resetScoreBtn" class="btn btn-outline-danger btn-block">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Reset High Score</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>Tugas Rutin 6 — Pemrograman Web</p>
+    </footer>
+  </div>
+
+  <script src="assets/js/questions.js"></script>
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/dom.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/timer.js"></script>
+  <script src="assets/js/quiz.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
